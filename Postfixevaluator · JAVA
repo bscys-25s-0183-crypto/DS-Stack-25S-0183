@@ -1,38 +1,13 @@
 import java.util.Stack;
 import java.util.Scanner;
 
-/**
- * Class: PostfixEvaluator
- * Purpose: Evaluate postfix expressions using stack data structure
- * Support: +, -, *, / operators
- * 
- * @author Data Structures Lab
- * @version 1.0
- */
 public class PostfixEvaluator {
     
-    /**
-     * Method: isOperator
-     * Purpose: Check if a character is a valid operator (+, -, *, /)
-     * 
-     * @param token The character to check
-     * @return true if token is an operator, false otherwise
-     */
     public static boolean isOperator(String token) {
         return token.equals("+") || token.equals("-") || 
                token.equals("*") || token.equals("/");
     }
     
-    /**
-     * Method: performOperation
-     * Purpose: Perform arithmetic operation on two operands
-     * 
-     * @param operand1 First operand
-     * @param operand2 Second operand
-     * @param operator The arithmetic operator
-     * @return Result of the operation
-     * @throws ArithmeticException if division by zero occurs
-     */
     public static int performOperation(int operand1, int operand2, String operator) 
             throws ArithmeticException {
         switch(operator) {
@@ -52,19 +27,12 @@ public class PostfixEvaluator {
         }
     }
     
-    /**
-     * Method: displayStackState
-     * Purpose: Display current state of stack
-     * 
-     * @param stack The stack to display
-     */
     public static void displayStackState(Stack<Integer> stack) {
         System.out.print("  Stack state: ");
         if(stack.isEmpty()) {
             System.out.println("[empty]");
         } else {
             System.out.print("[");
-            // Create a copy to display without modifying original
             Stack<Integer> temp = (Stack<Integer>) stack.clone();
             StringBuilder sb = new StringBuilder();
             while(!temp.isEmpty()) {
@@ -74,21 +42,6 @@ public class PostfixEvaluator {
         }
     }
     
-    /**
-     * Method: evaluatePostfix
-     * Purpose: Evaluate postfix expression using stack
-     * 
-     * Algorithm:
-     *   1. Split expression by spaces to get tokens
-     *   2. For each token:
-     *      - If operand: push to stack
-     *      - If operator: pop two operands, perform operation, push result
-     *   3. Return the final result (top of stack)
-     * 
-     * @param postfixExpression Space-separated postfix expression
-     * @return The integer result of evaluation
-     * @throws IllegalArgumentException if expression is invalid
-     */
     public static int evaluatePostfix(String postfixExpression) 
             throws IllegalArgumentException {
         Stack<Integer> stack = new Stack<>();
@@ -97,32 +50,26 @@ public class PostfixEvaluator {
         
         System.out.println("\n--- Step-by-Step Evaluation ---");
         
-        // Process each token in the postfix expression
         for(String token : tokens) {
             System.out.println("\nStep " + stepCount + ": Processing '" + token + "'");
             
-            // Check if token is an operator
             if(isOperator(token)) {
-                // Validate sufficient operands
                 if(stack.size() < 2) {
                     throw new IllegalArgumentException(
                         "Error: Invalid postfix expression! Insufficient operands.");
                 }
                 
-                // Pop two operands (note: order matters for - and /)
-                int operand2 = stack.pop();  // Second operand (popped first)
-                int operand1 = stack.pop();  // First operand
+                int operand2 = stack.pop();
+                int operand1 = stack.pop();
                 
                 System.out.println("  Operator: " + token);
                 System.out.println("  Operand 1: " + operand1 + ", Operand 2: " + operand2);
                 
-                // Perform operation
                 try {
                     int result = performOperation(operand1, operand2, token);
                     System.out.println("  Operation: " + operand1 + " " + token + " " + 
                                      operand2 + " = " + result);
                     
-                    // Push result back to stack
                     stack.push(result);
                     System.out.println("  Pushed result: " + result + " to stack");
                 } catch(ArithmeticException e) {
@@ -130,7 +77,6 @@ public class PostfixEvaluator {
                     throw new IllegalArgumentException(e.getMessage());
                 }
             } else {
-                // Token is an operand - parse as integer
                 try {
                     int operand = Integer.parseInt(token);
                     stack.push(operand);
@@ -141,14 +87,12 @@ public class PostfixEvaluator {
                 }
             }
             
-            // Display current stack state
             displayStackState(stack);
             stepCount++;
         }
         
         System.out.println("\n--- Final Result ---");
         
-        // Validate final state
         if(stack.size() == 1) {
             int result = stack.pop();
             System.out.println("Result: " + result);
@@ -161,15 +105,6 @@ public class PostfixEvaluator {
         }
     }
     
-    /**
-     * Method: runTestCase
-     * Purpose: Execute a single test case with expected output
-     * 
-     * @param testNumber Test case number
-     * @param expression The postfix expression to evaluate
-     * @param expected Expected result
-     * @param description Description of what the test does
-     */
     public static void runTestCase(int testNumber, String expression, 
                                    int expected, String description) {
         System.out.println("\n" + "=".repeat(50));
@@ -193,62 +128,25 @@ public class PostfixEvaluator {
         }
     }
     
-    /**
-     * Main method: Demonstrates postfix evaluation with multiple test cases
-     */
     public static void main(String[] args) {
         System.out.println("========================================");
         System.out.println("   POSTFIX EXPRESSION EVALUATOR (Java)");
         System.out.println("========================================");
         
-        // Test Case 1: Simple Addition
-        runTestCase(1, 
-                   "5 3 +", 
-                   8,
-                   "Simple Addition");
-        
-        // Test Case 2: Mixed Operations (Multiplication and Addition)
-        runTestCase(2,
-                   "6 2 3 + *",
-                   30,
-                   "Mixed Operations");
-        
-        // Test Case 3: Another Mixed Expression
-        runTestCase(3,
-                   "4 2 3 + *",
-                   20,
-                   "Complex Expression");
-        
-        // Test Case 4: Complex Expression with Multiple Operations
-        runTestCase(4,
-                   "15 7 1 1 + - / 3 * 2 1 1 + + -",
-                   5,
-                   "Very Complex Expression");
-        
-        // Test Case 5: Subtraction and Division
-        runTestCase(5,
-                   "10 5 -",
-                   5,
-                   "Simple Subtraction");
-        
-        // Test Case 6: Division
-        runTestCase(6,
-                   "20 4 /",
-                   5,
-                   "Simple Division");
+        runTestCase(1, "5 3 +", 8, "Simple Addition");
+        runTestCase(2, "6 2 3 + *", 30, "Mixed Operations");
+        runTestCase(3, "4 2 3 + *", 20, "Complex Expression");
+        runTestCase(4, "15 7 1 1 + - / 3 * 2 1 1 + + -", 5, "Very Complex Expression");
+        runTestCase(5, "10 5 -", 5, "Simple Subtraction");
+        runTestCase(6, "20 4 /", 5, "Simple Division");
         
         System.out.println("\n" + "=".repeat(50));
         System.out.println("   All test cases completed!");
         System.out.println("=".repeat(50));
         
-        // Interactive mode
         interactiveMode();
     }
     
-    /**
-     * Method: interactiveMode
-     * Purpose: Allow user to input and evaluate custom postfix expressions
-     */
     public static void interactiveMode() {
         Scanner scanner = new Scanner(System.in);
         boolean continueEvaluation = true;
